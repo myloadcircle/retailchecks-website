@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailChecks - Store Verification (Fixed)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+        }
+        
+        .retail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        
+        .retail-header {
+            border-bottom: 2px solid #000000;
+            padding-bottom: 30px;
+            margin-bottom: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .retail-title {
+            font-size: 48px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: -1.5px;
+            margin: 0;
+            background: linear-gradient(90deg, #000000 70%, #0066B3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .retail-subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .retail-node {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            color: #E50010;
+            background-color: #F5F5F5;
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .retail-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2px;
+            background: #eee;
+            border: 1px solid #eee;
+        }
+        
+        .retail-employee {
+            background: #fff;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .retail-employee:hover {
+            background-color: #fafafa;
+        }
+        
+        .retail-employee.pending {
+            background-color: #f9f9f9;
+        }
+        
+        .employee-name {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        
+        .employee-id {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .status-indicator {
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .status-active {
+            color: #000000;
+        }
+        
+        .status-pending {
+            color: #ff0000;
+        }
+        
+        .retail-button {
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 12px 28px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            border-radius: 2px;
+        }
+        
+        .retail-button:hover {
+            background: #333333;
+            transform: translateY(-1px);
+        }
+        
+        .retail-button:active {
+            transform: translateY(0);
+        }
+        
+        .retail-button:disabled {
+            background: #cccccc;
+            color: #999999;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .retail-button.locked {
+            background: #ffffff;
+            color: #cccccc;
+            border: 1px solid #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .notification.success {
+            background-color: #10B981;
+        }
+        
+        .notification.error {
+            background-color: #EF4444;
+        }
+        
+        .notification.warning {
+            background-color: #F59E0B;
+        }
+        
+        .notification.info {
+            background-color: #3B82F6;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .retail-employee {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .retail-title {
+                font-size: 36px;
+            }
+            
+            .retail-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section id="retail-audit-ui">
+        <div class="retail-container">
+            <div class="retail-header">
+                <div>
+                    <h2 class="retail-title">Store Verification</h2>
+                    <p class="retail-subtitle">H&M × Uniqlo blended identity system</p>
+                </div>
+                <div>
+                    <p class="retail-node">US-RETAIL-FASHION</p>
+                </div>
+            </div>
+
+            <div class="retail-grid">
+                <!-- Employee 1: Active -->
+                <div class="retail-employee" data-employee="chloe">
+                    <span class="employee-name">Chloe V. (Floor Staff)</span>
+                    <span class="employee-id">ID: 9928-NY</span>
+                    <span class="status-indicator status-active">● BIOMETRIC ACTIVE</span>
+                    <div style="text-align: right;">
+                        <button class="retail-button" onclick="verifyRetailEmployee('Chloe', 'V.', 'chloe', this)">
+                            Store Access
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Employee 2: Pending -->
+                <div class="retail-employee pending" data-employee="liam">
+                    <span class="employee-name">Liam K. (Logistics)</span>
+                    <span class="employee-id">ID: PENDING</span>
+                    <span class="status-indicator status-pending">○ LIVENESS REQD</span>
+                    <div style="text-align: right;">
+                        <button class="retail-button locked" disabled>
+                            Locked
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Employee 3: Additional example -->
+                <div class="retail-employee" data-employee="maya">
+                    <span class="employee-name">Maya R. (Manager)</span>
+                    <span class="employee-id">ID: 7742-NY</span>
+                    <span class="status-indicator status-active">● BIOMETRIC ACTIVE</span>
+                    <div style="text-align: right;">
+                        <button class="retail-button" onclick="verifyRetailEmployee('Maya', 'R.', 'maya', this)">
+                            Store Access
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 4px;">
+                <h3 style="margin-bottom: 10px;">Debug Information</h3>
+                <p>Server: <code>http://localhost:8081/</code></p>
+                <p>Status: <span id="debugStatus">Ready</span></p>
+                <p>Open browser console (F12) to see detailed logs</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Load the simple non-module JavaScript -->
+    <script src="retail-integration-simple.js"></script>
+    
+    <script>
+        // UI helper functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        function updateEmployeeStatus(employeeId, status) {
+            const statusElement = document.querySelector(`[data-employee="${employeeId}"] .status-indicator`);
+            if (statusElement) {
+                if (status === 'verified') {
+                    statusElement.textContent = '● VERIFIED';
+                    statusElement.style.color = '#10B981';
+                } else if (status === 'verifying') {
+                    statusElement.textContent = '● VERIFYING...';
+                    statusElement.style.color = '#F59E0B';
+                } else if (status === 'failed') {
+                    statusElement.textContent = '○ FAILED';
+                    statusElement.style.color = '#EF4444';
+                }
+            }
+        }
+        
+        // Main verification function
+        async function verifyRetailEmployee(firstName, lastName, employeeId, button) {
+            console.log(`Starting retail verification for ${firstName} ${lastName}`);
+            
+            // Update UI
+            const originalText = button.textContent;
+            button.textContent = 'Verifying...';
+            button.disabled = true;
+            updateEmployeeStatus(employeeId, 'verifying');
+            
+            showNotification(`Starting verification for ${firstName} ${lastName}`, 'info');
+            
+            try {
+                // Use the global function from retail-integration-simple.js
+                const result = await triggerRetailVerification({
+                    name: firstName,
+                    surname: lastName,
+                    id: employeeId
+                });
+                
+                console.log('Verification result:', result);
+                
+                if (result.success) {
+                    button.textContent = '✓ Verified';
+                    button.style.backgroundColor = '#10B981';
+                    updateEmployeeStatus(employeeId, 'verified');
+                    showNotification(`✅ ${firstName} ${lastName} verification successful`, 'success');
+                } else {
+                    button.textContent = 'Retry';
+                    button.disabled = false;
+                    button.style.backgroundColor = '#EF4444';
+                    updateEmployeeStatus(employeeId, 'failed');
+                    showNotification(`⚠️ ${firstName} ${lastName} verification failed`, 'warning');
+                    
+                    // Reset button color after 2 seconds
+                    setTimeout(() => {
+                        button.style.backgroundColor = '#000';
+                    }, 2000);
+                }
+                
+                return result;
+                
+            } catch (error) {
+                console.error('Verification error:', error);
+                button.textContent = 'Error - Retry';
+                button.disabled = false;
+                button.style.backgroundColor = '#EF4444';
+                updateEmployeeStatus(employeeId, 'failed');
+                showNotification(`❌ Error: ${error.message}`, 'error');
+                
+                // Reset button color after 2 seconds
+                setTimeout(() => {
+                    button.style.backgroundColor = '#000';
+                }, 2000);
+                
+                return { success: false, error: error.message };
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Retail verification page loaded');
+            console.log('Using simple non-module integration');
+            
+            // Check if integration loaded
+            if (typeof triggerRetailVerification === 'function') {
+                document.getElementById('debugStatus').textContent = 'Integration loaded ✓';
+                document.getElementById('debugStatus').style.color = '#10B981';
+                console.log('Retail integration ready');
+            } else {
+                document.getElementById('debugStatus').textContent = 'Integration failed ✗';
+                document.getElementById('debugStatus').style.color = '#EF4444';
+                console.error('Retail integration not loaded');
+            }
+        });
+    </script>
+</body>
+</html>
